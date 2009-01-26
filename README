@@ -1,0 +1,83 @@
+Visibility
+==========
+
+A very simple plugin that provides some visibility into what your Rails processes are doing
+at any given time, by changing the process name seen by the operating system.
+
+For example, without the visibility plugin, if you're running a local rails server you'll see this:
+
+$ ps auxxx | grep "server"
+USER       PID %CPU %MEM      VSZ    RSS   TT  STAT STARTED      TIME COMMAND
+sd       10356   0.2  4.9   198748 102884 s006  R+   Sat05PM   7:36.12 ./script/server 
+
+But when the visibility plugin is active, you'll see:
+
+$ ps auxxx | grep "server"
+USER       PID %CPU %MEM      VSZ    RSS   TT  STAT STARTED      TIME COMMAND
+sd       10356   0.2  4.9   198748 102884 s006  R+   Sat05PM   7:36.12 ./script/server: GET /home/about
+
+Obviously, on your local development server you probably already know which action is being executed,
+but on a production server with multiple rails instances running, you would have to look at the logs
+to figure out what is going on on each process. That's where something like this comes handy:
+
+$ ps auxxx | grep "Rails"
+ app      19258 10.6  8.0 164120 144128 ?       S    17:33  21:29 Rails: GET /foo/bar
+ app      19262 11.9  8.5 174620 152264 ?       S    17:33  24:00 Rails: GET /foo/very_slow_action
+ app      19267 11.1  8.1 162964 144876 ?       S    17:33  22:26 Rails                                     
+
+You can customize the "prefix" on your environment.rb file by overriding the 'title_prefix' method.
+For example, just add the following after the Rails::Initializer.run block:
+
+def Visibility.title_prefix
+  "Rails"
+end
+
+
+
+NOTE:
+It seems that OS X caps process names at 30 characters or so, which limits the utility of this plugin.
+Linux does allow for much longer names, so for those of you developing on macs and deploying on linux,
+give it a try on your server before deciding whether to keep using it or not.
+
+This idea for plugin came from the mongrel_proctitle plugin, created by Alexander Staubo <alex@purefiction.net>  
+and available at http://purefiction.net/mongrel_proctitle/
+
+
+-------------------------------------------------------------------------------
+Copyright (c) 2009 Sebastian Delmont <sd@notso.net> 
+Copyright (c) 2009 StreetEasy / NMD Interactive <http://www.streeteasy.com/> 
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without modification,
+are permitted provided that the following conditions are met:
+
+* Redistributions of source code must retain the above copyright notice, this 
+list of conditions and the following disclaimer.
+
+* Redistributions in binary form must reproduce the above copyright notice, this
+list of conditions and the following disclaimer in the documentation and/or
+other materials provided with the distribution.
+
+* Neither the name of Sebastian Delmont, nor StreetEasy nor NMD Interactive 
+nor the names of their contributors may be used to endorse or promote products 
+derived from this software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
+ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+-------------------------------------------------------------------------------
+
+CONTRIBUTORS
+- Sebastian Delmont <sd@notso.net>
+
+
+RELEASE HISTORY
+1.0 - Jan 26th 2009
+  Original release.
