@@ -15,17 +15,9 @@ module Visibility
     end
   
     def process_with_visibility(request, response, method = :perform_action, *arguments)
-      saved_process_name = $0
-      if $0 == Visibility.original_process_name
-        $0 = "#{Visibility.title_prefix}: #{title_for_request(request)}"
-      else
-        $0 = "#{saved_process_name}: #{title_for_request(request)}"
-      end
-      
+      Visibility.push_title(title_for_request(request), :append_to_current => true)
       result = process_without_visibility(request, response, method, *arguments)
-
-      $0 = saved_process_name
-
+      Visibility.pop_title
       result
     end
   end
